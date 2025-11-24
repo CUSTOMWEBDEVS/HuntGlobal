@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HuntGlobal - A Hub For Hunters</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="app.css">
+
+  <!-- Leaflet for mapping -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="logo">Hunt<span>Global</div>
+      <div class="group-info">
+        <input id="displayNameInput" placeholder="Your name">
+        <input id="groupCodeInput" placeholder="Group code (or leave blank)">
+        <button id="joinGroupBtn">Join / Create</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <nav class="tabs">
+        <button data-tab="group" class="tab">Hunt Group</button>
+        <button data-tab="blood" class="tab">TrackTheDrops</button>
+        <button data-tab="movement" class="tab">Deer Movement</button>
+        <button data-tab="guide" class="tab">Guide</button>
+        <button data-tab="feed" class="tab">Feed</button>
+      </nav>
+
+      <section id="tab-group" class="tab-panel">
+        <h2>Hunt Group</h2>
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>Live Map</h3>
+            <div id="groupMap" class="map-container"></div>
+          </div>
+          <div class="panel">
+            <h3>Actions</h3>
+            <button class="btn alert-btn" data-alert="DEER_SEEN">Deer Seen</button>
+            <button class="btn alert-btn" data-alert="DEER_DOWN">Deer Down</button>
+            <button class="btn alert-btn" data-alert="TURKEY_DOWN">Turkey Down</button>
+            <button class="btn alert-btn warn" data-alert="HELP">Need Help</button>
+            <button class="btn alert-btn danger" data-alert="EMERGENCY">EMERGENCY</button>
+
+            <h3>Stands</h3>
+            <button class="btn" id="saveStandBtn">Save Current Stand</button>
+            <ul id="standsList" class="list"></ul>
+          </div>
+          <div class="panel">
+            <h3>Recent Alerts</h3>
+            <ul id="alertsList" class="list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-blood" class="tab-panel">
+  <h2>TrackTheDrops</h2>
+  <div class="ttd-wrapper">
+    <iframe
+      src="ttd/index.html"
+      class="ttd-frame"
+      title="TrackTheDrops"
+    ></iframe>
+  </div>
+</section>
+
+      <section id="tab-movement" class="tab-panel">
+        <h2>Deer Movement Near You</h2>
+        <p class="hint">Uses the last deer seen/down alerts within 50 miles of your position.</p>
+        <button class="btn" id="refreshMovementBtn">Refresh Movement Data</button>
+        <div id="movementSummary"></div>
+        <ul id="movementList" class="list"></ul>
+      </section>
+
+      <section id="tab-guide" class="tab-panel">
+        <h2>How to Gut a Deer</h2>
+        <div id="guideStep" class="guide-step">
+          <!-- Step content injected by JS -->
+        </div>
+        <div class="guide-controls">
+          <button class="btn" id="prevStepBtn">Previous</button>
+          <button class="btn" id="nextStepBtn">Next</button>
+        </div>
+      </section>
+
+      
+      <section id="tab-feed" class="tab-panel">
+        <h2>Camp Feed</h2>
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>New Post</h3>
+            <input id="feedCaption" placeholder="Caption">
+            <select id="feedSpecies">
+              <option value="DEER">Deer</option>
+              <option value="TURKEY">Turkey</option>
+              <option value="OTHER">Other</option>
+            </select>
+            <select id="feedSex">
+              <option value="">N/A</option>
+              <option value="BUCK">Buck</option>
+              <option value="DOE">Doe</option>
+            </select>
+            <input id="feedLocationLbl" placeholder="Location label (e.g. Jefferson County, MO)">
+            <input id="feedImageUrl" placeholder="Image URL (optional)">
+            <button class="btn" id="postFeedBtn">Post</button>
+          </div>
+          <div class="panel">
+            <h3>Recent Posts</h3>
+            <ul id="feedList" class="feed-list"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
