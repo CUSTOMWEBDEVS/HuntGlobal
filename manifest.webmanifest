@@ -1,14 +1,13 @@
 {
-  "id": "/",
-  "name": "TrackTheDrops Hunt Hub",
-  "short_name": "Hunt Hub",
-  "description": "Track blood trails, your hunt group, deer movement near you, and log camp harvests — even with spotty service.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "id": "/HuntGlobal/",
+  "name": "HuntGlobal",
+  "short_name": "HuntGlobal",
+  "description": "Track blood trails, your hunt group, deer movement near you, and camp harvests.",
+  "start_url": "/HuntGlobal/index.html",
+  "scope": "/HuntGlobal/",
   "display": "standalone",
-  "display_override": ["standalone"],
   "orientation": "portrait",
   "background_color": "#050608",
   "theme_color": "#050608",
-  "categories": ["sports", "navigation", "productivity"]
+  "icons": []
 }

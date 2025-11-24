@@ -1,36 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HuntGlobal - A Hub For Hunters</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="app.css">
-
-  <!-- Leaflet for mapping -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HuntGlobal</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="app.css" />
 </head>
 <body>
   <div id="app">
     <header class="app-header">
-      <div class="logo">Hunt<span>Global</div>
+      <div class="logo">Hunt<span>Global</span></div>
       <div class="group-info">
         <input id="displayNameInput" placeholder="Your name">
-        <input id="groupCodeInput" placeholder="Group code (or leave blank)">
+        <input id="groupCodeInput" placeholder="Group code (or blank to create)">
         <button id="joinGroupBtn">Join / Create</button>
       </div>
     </header>
 
     <main class="app-main">
       <nav class="tabs">
+        <button data-tab="blood" class="tab active">Blood Track</button>
         <button data-tab="group" class="tab">Hunt Group</button>
-        <button data-tab="blood" class="tab">TrackTheDrops</button>
         <button data-tab="movement" class="tab">Deer Movement</button>
-        <button data-tab="guide" class="tab">Guide</button>
         <button data-tab="feed" class="tab">Feed</button>
+        <button data-tab="guide" class="tab">Guide</button>
       </nav>
+
+      <section id="tab-blood" class="tab-panel active">
+        <h2>TrackTheDrops</h2>
+        <div class="ttd-wrapper">
+          <iframe src="ttd/index.html" class="ttd-frame" title="TrackTheDrops"></iframe>
+        </div>
+      </section>
 
       <section id="tab-group" class="tab-panel">
         <h2>Hunt Group</h2>
@@ -58,37 +60,14 @@
         </div>
       </section>
 
-      <section id="tab-blood" class="tab-panel">
-  <h2>TrackTheDrops</h2>
-  <div class="ttd-wrapper">
-    <iframe
-      src="ttd/index.html"
-      class="ttd-frame"
-      title="TrackTheDrops"
-    ></iframe>
-  </div>
-</section>
-
       <section id="tab-movement" class="tab-panel">
         <h2>Deer Movement Near You</h2>
-        <p class="hint">Uses the last deer seen/down alerts within 50 miles of your position.</p>
+        <p class="hint">Uses deer seen/down alerts within 50 miles of your position.</p>
         <button class="btn" id="refreshMovementBtn">Refresh Movement Data</button>
         <div id="movementSummary"></div>
         <ul id="movementList" class="list"></ul>
       </section>
 
-      <section id="tab-guide" class="tab-panel">
-        <h2>How to Gut a Deer</h2>
-        <div id="guideStep" class="guide-step">
-          <!-- Step content injected by JS -->
-        </div>
-        <div class="guide-controls">
-          <button class="btn" id="prevStepBtn">Previous</button>
-          <button class="btn" id="nextStepBtn">Next</button>
-        </div>
-      </section>
-
-      
       <section id="tab-feed" class="tab-panel">
         <h2>Camp Feed</h2>
         <div class="panel-grid">
@@ -105,7 +84,7 @@
               <option value="BUCK">Buck</option>
               <option value="DOE">Doe</option>
             </select>
-            <input id="feedLocationLbl" placeholder="Location label (e.g. Jefferson County, MO)">
+            <input id="feedLocationLbl" placeholder="Location label">
             <input id="feedImageUrl" placeholder="Image URL (optional)">
             <button class="btn" id="postFeedBtn">Post</button>
           </div>
@@ -115,9 +94,29 @@
           </div>
         </div>
       </section>
+
+      <section id="tab-guide" class="tab-panel">
+        <h2>How to Gut a Deer</h2>
+        <div id="guideStep" class="guide-step"></div>
+        <div class="guide-controls">
+          <button class="btn" id="prevStepBtn">Previous</button>
+          <button class="btn" id="nextStepBtn">Next</button>
+        </div>
+      </section>
     </main>
   </div>
 
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
   <script src="app.js"></script>
 </body>
 </html>

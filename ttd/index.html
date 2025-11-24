@@ -51,15 +51,5 @@
   </div>
 
   <script defer src="./app.js"></script>
-  <script>
-    // Register the service worker so we actually behave as an installable PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').catch(function () {
-          // silent fail
-        });
-      });
-    }
-  </script>
 </body>
 </html>

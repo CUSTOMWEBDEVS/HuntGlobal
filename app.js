@@ -1,6 +1,5 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbxYwLykDO9ARhVZ4oSi21P8gZThrncfCAcbVdnoigiSVoHS27mAfdq8H8RoQ7J_hqG8/exec';
 
-// State
 let deviceId = localStorage.getItem('deviceId') || null;
 let groupCode = localStorage.getItem('groupCode') || '';
 let displayName = localStorage.getItem('displayName') || '';
@@ -10,32 +9,32 @@ let currentGuideStep = 0;
 
 const guideSteps = [
   {
-    title: "Position the deer",
-    text: "Lay the deer on its back with the head uphill if possible. This keeps organs from pushing toward the chest and makes cuts easier."
+    title: 'Position the deer',
+    text: 'Lay the deer on its back with the head uphill if possible. This keeps organs from pushing toward the chest and makes cuts easier.'
   },
   {
-    title: "Make the initial cut",
-    text: "Starting at the pelvis, gently pinch the hide and make a shallow cut. Use two fingers to lift the hide and cut up toward the sternum, keeping the blade away from organs."
+    title: 'Make the initial cut',
+    text: 'Starting at the pelvis, gently pinch the hide and make a shallow cut. Use two fingers to lift the hide and cut up toward the sternum, keeping the blade away from organs.'
   },
   {
-    title: "Open the body cavity",
-    text: "Carefully continue the cut up the belly to the base of the ribcage. Avoid puncturing the stomach or intestines as they can taint the meat."
+    title: 'Open the body cavity',
+    text: 'Carefully continue the cut up the belly to the base of the ribcage. Avoid puncturing the stomach or intestines as they can taint the meat.'
   },
   {
-    title: "Free the diaphragm",
-    text: "Reach in and cut the thin muscle wall (diaphragm) separating chest and abdomen. Work around the ribs to loosen everything."
+    title: 'Free the diaphragm',
+    text: 'Reach in and cut the thin muscle wall (diaphragm) separating chest and abdomen. Work around the ribs to loosen everything.'
   },
   {
-    title: "Cut the windpipe",
-    text: "Reach up into the chest, find the windpipe, and cut it as high toward the throat as you can. This releases the heart and lungs."
+    title: 'Cut the windpipe',
+    text: 'Reach up into the chest, find the windpipe, and cut it as high toward the throat as you can. This releases the heart and lungs.'
   },
   {
-    title: "Remove the organs",
-    text: "Gently pull the organs out, rolling them away from the carcass. If anything resists, check for connective tissue and cut it free."
+    title: 'Remove the organs',
+    text: 'Gently pull the organs out, rolling them away from the carcass. If anything resists, check for connective tissue and cut it free.'
   },
   {
-    title: "Clean and cool",
-    text: "Tip the deer on its side to drain blood. Wipe out debris with a clean cloth or snow. Prop the cavity open to cool as quickly as possible."
+    title: 'Clean and cool',
+    text: 'Tip the deer on its side to drain blood. Wipe out debris with a clean cloth or snow. Prop the cavity open to cool as quickly as possible.'
   }
 ];
 
@@ -71,7 +70,7 @@ function initTabs() {
       panels.forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       const id = btn.dataset.tab;
-      document.getElementById(`tab-${id}`).classList.add('active');
+      document.getElementById('tab-' + id).classList.add('active');
     });
   });
 }
@@ -92,8 +91,8 @@ function initAuthControls() {
     };
 
     const res = await callApi(body);
-    if (!res.ok === false || res.error) {
-      alert('Error joining group: ' + res.error);
+    if (!res || res.error || res.ok === false) {
+      alert('Error joining group: ' + (res && res.error));
       return;
     }
     groupCode = res.groupCode;
@@ -101,7 +100,6 @@ function initAuthControls() {
     localStorage.setItem('groupCode', groupCode);
     localStorage.setItem('displayName', displayName);
     groupInput.value = groupCode;
-    // Immediately load group state
     refreshGroupState();
   });
 }
@@ -114,17 +112,14 @@ function initGroupMap() {
     attribution: '© OpenStreetMap'
   }).addTo(groupMap);
 
-  // Start periodic ping if we have groupCode
   if (groupCode) {
     refreshGroupState();
   }
 
   if ('geolocation' in navigator) {
-    // Ping every 30s
     setInterval(() => {
       pingLocation();
     }, 30000);
-    // Ping once at load
     pingLocation();
   }
 }
@@ -143,7 +138,6 @@ async function pingLocation() {
       lng: longitude
     };
     await callApi(body);
-    // Refresh state after ping
     refreshGroupState();
   }, err => {
     console.warn('Geolocation error: ', err);
@@ -151,7 +145,6 @@ async function pingLocation() {
 }
 
 function initGroupActions() {
-  // Alert buttons
   document.querySelectorAll('.alert-btn').forEach(btn => {
     btn.addEventListener('click', () => sendAlert(btn.dataset.alert));
   });
@@ -213,10 +206,7 @@ async function sendAlert(type) {
       notes
     };
     const res = await callApi(body);
-    if (res && res.weather) {
-      // Optional: toast or something
-      console.log('Alert logged with weather:', res.weather);
-    }
+    console.log('Alert logged', res);
     refreshGroupState();
   });
 }
@@ -229,12 +219,9 @@ async function refreshGroupState() {
     lookbackHours: 24
   });
   if (!res || res.error) return;
-
-  // Update markers
-  updateGroupMarkers(res.members);
-  // Update stands & alerts list
+  updateGroupMarkers(res.members || []);
   loadStands();
-  renderAlerts(res.alerts);
+  renderAlerts(res.alerts || []);
 }
 
 async function loadStands() {
@@ -249,16 +236,14 @@ async function loadStands() {
 
 function updateGroupMarkers(members) {
   if (!groupMap) return;
-  // Remove old markers
   Object.values(groupMarkers).forEach(m => groupMap.removeLayer(m));
   groupMarkers = {};
   members.forEach(m => {
     if (!m.lat || !m.lng) return;
     const marker = L.marker([m.lat, m.lng]).addTo(groupMap);
-    marker.bindPopup(`<strong>${m.displayName || 'Hunter'}</strong><br><small>Last seen: ${m.lastSeen}</small>`);
+    marker.bindPopup('<strong>' + (m.displayName || 'Hunter') + '</strong><br><small>Last seen: ' + m.lastSeen + '</small>');
     groupMarkers[m.deviceId] = marker;
   });
-  // Adjust view if we have members
   if (members.length > 0) {
     const group = new L.featureGroup(Object.values(groupMarkers));
     groupMap.fitBounds(group.getBounds().pad(0.3));
@@ -270,8 +255,8 @@ function renderStands(stands) {
   list.innerHTML = '';
   stands.forEach(s => {
     const li = document.createElement('li');
-    li.innerHTML = `<strong>${s.name}</strong><br>
-      <span class="meta">${s.lat.toFixed(5)}, ${s.lng.toFixed(5)}</span>`;
+    li.innerHTML = '<strong>' + s.name + '</strong><br><span class="meta">' +
+      s.lat.toFixed(5) + ', ' + s.lng.toFixed(5) + '</span>';
     list.appendChild(li);
   });
 }
@@ -281,13 +266,12 @@ function renderAlerts(alerts) {
   list.innerHTML = '';
   alerts.forEach(a => {
     const li = document.createElement('li');
-    li.innerHTML = `<strong>${a.type.replace('_',' ')}</strong> by ${a.displayName || 'Hunter'}<br>
-      <div class="meta">${new Date(a.timestamp).toLocaleString()} · ${a.weather || ''}</div>`;
+    li.innerHTML = '<strong>' + a.type.replace('_', ' ') + '</strong> by ' +
+      (a.displayName || 'Hunter') + '<br><div class="meta">' +
+      new Date(a.timestamp).toLocaleString() + ' · ' + (a.weather || '') + '</div>';
     list.appendChild(li);
   });
 }
-
-/******** DEER MOVEMENT ********/
 
 function initMovement() {
   document.getElementById('refreshMovementBtn').addEventListener('click', loadMovement);
@@ -326,7 +310,6 @@ function renderMovement(events) {
     return;
   }
 
-  // Quick stats: buck vs doe, most active hour
   let buckCount = 0, doeCount = 0;
   const hourBuckets = new Array(24).fill(0);
 
@@ -339,26 +322,24 @@ function renderMovement(events) {
 
   const peakHour = hourBuckets.reduce((best, val, idx) => val > best.val ? { val, idx } : best, { val: -1, idx: 0 }).idx;
 
-  summaryEl.textContent = `Events: ${events.length} · Bucks: ${buckCount} · Does: ${doeCount} · Peak hour (local): ${peakHour}:00`;
+  summaryEl.textContent = 'Events: ' + events.length +
+    ' · Bucks: ' + buckCount +
+    ' · Does: ' + doeCount +
+    ' · Peak hour (local): ' + peakHour + ':00';
 
   events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   events.forEach(e => {
     const li = document.createElement('li');
-    li.innerHTML = `
-      <strong>${e.type.replace('_',' ')}</strong> ${e.sex ? '· ' + e.sex : ''}<br>
-      <div class="meta">
-        ${new Date(e.timestamp).toLocaleString()} · ${e.distanceMiles.toFixed(1)} mi away · ${e.weather || ''}
-      </div>
-    `;
+    li.innerHTML = '<strong>' + e.type.replace('_', ' ') + '</strong> ' +
+      (e.sex ? '· ' + e.sex : '') + '<br><div class="meta">' +
+      new Date(e.timestamp).toLocaleString() + ' · ' +
+      e.distanceMiles.toFixed(1) + ' mi away · ' + (e.weather || '') + '</div>';
     list.appendChild(li);
   });
 }
 
-/******** FEED ********/
-
 function initFeed() {
   document.getElementById('postFeedBtn').addEventListener('click', postFeed);
-  // Load initial
   loadFeed();
 }
 
@@ -407,29 +388,24 @@ function renderFeed(posts) {
   posts.forEach(p => {
     const li = document.createElement('li');
     li.className = 'feed-item';
-    li.innerHTML = `
-      <div class="feed-header">
-        <span>${p.displayName || 'Hunter'}</span>
-        <span class="meta">${new Date(p.timestamp).toLocaleString()}</span>
-      </div>
-      <div class="feed-caption">${p.caption || ''}</div>
-      <div class="feed-meta">
-        ${p.species || ''} ${p.sex || ''} · ${p.locationLbl || ''}
-      </div>
-      ${p.imageUrl ? `<div class="feed-meta"><a href="${p.imageUrl}" target="_blank">View Image</a></div>` : ''}
-      <div class="feed-meta">Comments:</div>
-      <ul class="list comments" data-rowid="${p.rowId}"></ul>
-      <div class="comment-input">
-        <input placeholder="Add comment..." data-rowid="${p.rowId}">
-      </div>
-    `;
+    li.innerHTML =
+      '<div class="feed-header">' +
+      '<span>' + (p.displayName || 'Hunter') + '</span>' +
+      '<span class="meta">' + new Date(p.timestamp).toLocaleString() + '</span>' +
+      '</div>' +
+      '<div class="feed-caption">' + (p.caption || '') + '</div>' +
+      '<div class="feed-meta">' + (p.species || '') + ' ' + (p.sex || '') +
+      ' · ' + (p.locationLbl || '') + '</div>' +
+      (p.imageUrl ? '<div class="feed-meta"><a href="' + p.imageUrl +
+      '" target="_blank">View Image</a></div>' : '') +
+      '<div class="feed-meta">Comments:</div>' +
+      '<ul class="list comments" data-rowid="' + p.rowId + '"></ul>' +
+      '<div class="comment-input"><input placeholder="Add comment..." data-rowid="' + p.rowId + '"></div>';
     list.appendChild(li);
   });
 
-  // Load comments per post
   posts.forEach(p => loadCommentsForPost(p.rowId));
 
-  // Attach comment input handlers
   list.querySelectorAll('.comment-input input').forEach(inp => {
     inp.addEventListener('keydown', ev => {
       if (ev.key === 'Enter') {
@@ -448,12 +424,12 @@ async function loadCommentsForPost(rowId) {
     feedRowId: Number(rowId)
   });
   if (!res || res.error) return;
-  const list = document.querySelector(`.comments[data-rowid="${rowId}"]`);
+  const list = document.querySelector('.comments[data-rowid="' + rowId + '"]');
   if (!list) return;
   list.innerHTML = '';
   (res.comments || []).forEach(c => {
     const li = document.createElement('li');
-    li.innerHTML = `<strong>${c.displayName || 'Hunter'}:</strong> ${c.text}`;
+    li.innerHTML = '<strong>' + (c.displayName || 'Hunter') + ':</strong> ' + c.text;
     list.appendChild(li);
   });
 }
@@ -468,8 +444,6 @@ async function postComment(rowId, text) {
   });
   loadCommentsForPost(rowId);
 }
-
-/******** GUIDE ********/
 
 function initGuide() {
   renderGuideStep();
@@ -486,22 +460,16 @@ function initGuide() {
 function renderGuideStep() {
   const step = guideSteps[currentGuideStep];
   const el = document.getElementById('guideStep');
-  el.innerHTML = `
-    <h3>Step ${currentGuideStep + 1}: ${step.title}</h3>
-    <p>${step.text}</p>
-  `;
+  el.innerHTML = '<h3>Step ' + (currentGuideStep + 1) + ': ' + step.title +
+    '</h3><p>' + step.text + '</p>';
 }
-
-/******** UTIL ********/
 
 async function callApi(body) {
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      // IMPORTANT: no headers here at all, just the body
       body: JSON.stringify(body)
     });
-
     return await res.json();
   } catch (err) {
     console.error('API error', err);
@@ -510,7 +478,8 @@ async function callApi(body) {
 }
 
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator &&
+      (location.protocol === 'https:' || location.hostname === 'localhost')) {
     navigator.serviceWorker.register('sw.js').catch(err => {
       console.warn('SW registration failed', err);
     });
