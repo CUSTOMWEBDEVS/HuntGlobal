@@ -276,7 +276,7 @@ input, select {
 }
 
 .ttd-wrapper {
-  height: 420px;
+  height: 900px;
   border-radius: 14px;
   border: 1px solid var(--border);
   overflow: hidden;
