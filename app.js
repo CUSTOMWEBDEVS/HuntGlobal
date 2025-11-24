@@ -498,8 +498,7 @@ async function callApi(body) {
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      // Use text/plain to avoid CORS preflight; Apps Script doesn't care about this header
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      // IMPORTANT: no headers here at all, just the body
       body: JSON.stringify(body)
     });
 
