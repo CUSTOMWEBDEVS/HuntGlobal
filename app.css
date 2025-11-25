@@ -36,9 +36,10 @@ body {
   border-bottom: 1px solid var(--border);
   background: linear-gradient(90deg, #050608, #101216);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .logo {
@@ -49,6 +50,37 @@ body {
 }
 .logo span {
   color: var(--accent);
+}
+
+.account-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.account-bar input {
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(6, 10, 18, 0.9);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.account-bar button {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+#accountStatus {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .group-info {
@@ -238,7 +270,8 @@ h3 {
   color: var(--text-muted);
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 0.35rem 0.5rem;
   margin-bottom: 0.3rem;
@@ -303,7 +336,8 @@ input, select {
     flex-direction: column;
     align-items: flex-start;
   }
-  .group-info {
+  .group-info,
+  .account-bar {
     width: 100%;
   }
 }

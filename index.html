@@ -2,45 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
+  />
   <title>HuntGlobal</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="app.css" />
+  <link rel="icon" href="favicon.ico" />
 </head>
 <body>
   <div id="app">
     <header class="app-header">
-      <div class="logo">Hunt<span>Global</span></div>
+      <div class="logo">HUNT<span>GLOBAL</span></div>
+
+      <!-- Accounts -->
+      <div class="account-bar">
+        <input id="emailInput" placeholder="Email" />
+        <input id="passwordInput" type="password" placeholder="Password" />
+        <button id="signupBtn">Sign Up</button>
+        <button id="loginBtn">Log In</button>
+        <span id="accountStatus"></span>
+      </div>
+
+      <!-- Group join/create -->
       <div class="group-info">
-        <input id="displayNameInput" placeholder="Your name">
-        <input id="groupCodeInput" placeholder="Group code (or blank to create)">
+        <input id="displayNameInput" placeholder="Your name" />
+        <input id="groupCodeInput" placeholder="Group code (or leave blank)" />
         <button id="joinGroupBtn">Join / Create</button>
       </div>
     </header>
 
     <main class="app-main">
       <nav class="tabs">
-        <button data-tab="blood" class="tab active">Blood Track</button>
-        <button data-tab="group" class="tab">Hunt Group</button>
-        <button data-tab="movement" class="tab">Deer Movement</button>
-        <button data-tab="feed" class="tab">Feed</button>
-        <button data-tab="guide" class="tab">Guide</button>
+        <button class="tab active" data-tab="blood">Blood Track</button>
+        <button class="tab" data-tab="group">Hunt Group</button>
+        <button class="tab" data-tab="movement">Deer Movement</button>
+        <button class="tab" data-tab="feed">Feed</button>
+        <button class="tab" data-tab="guide">Guide</button>
       </nav>
 
+      <!-- BLOOD TRACK (TrackTheDrops iframe) -->
       <section id="tab-blood" class="tab-panel active">
         <h2>TrackTheDrops</h2>
         <div class="ttd-wrapper">
-          <iframe src="ttd/index.html" class="ttd-frame" title="TrackTheDrops"></iframe>
+          <iframe
+            src="ttd/index.html"
+            class="ttd-frame"
+            title="TrackTheDrops"
+          ></iframe>
         </div>
       </section>
 
+      <!-- HUNT GROUP -->
       <section id="tab-group" class="tab-panel">
         <h2>Hunt Group</h2>
         <div class="panel-grid">
+          <!-- Map panel: static Google Maps embed -->
           <div class="panel">
-            <h3>Live Map</h3>
-            <div id="groupMap" class="map-container"></div>
+            <h3>Camp Map</h3>
+            <div class="map-container">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d25079.700863606427!2d-90.4711728!3d38.21076480000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1764031244178!5m2!1sen!2sus"
+                style="border:0;width:100%;height:100%;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
           </div>
+
+          <!-- Actions panel -->
           <div class="panel">
             <h3>Actions</h3>
             <button class="btn alert-btn" data-alert="DEER_SEEN">Deer Seen</button>
@@ -53,6 +85,8 @@
             <button class="btn" id="saveStandBtn">Save Current Stand</button>
             <ul id="standsList" class="list"></ul>
           </div>
+
+          <!-- Alerts panel -->
           <div class="panel">
             <h3>Recent Alerts</h3>
             <ul id="alertsList" class="list"></ul>
@@ -60,6 +94,7 @@
         </div>
       </section>
 
+      <!-- DEER MOVEMENT -->
       <section id="tab-movement" class="tab-panel">
         <h2>Deer Movement Near You</h2>
         <p class="hint">Uses deer seen/down alerts within 50 miles of your position.</p>
@@ -68,12 +103,13 @@
         <ul id="movementList" class="list"></ul>
       </section>
 
+      <!-- FEED -->
       <section id="tab-feed" class="tab-panel">
         <h2>Camp Feed</h2>
         <div class="panel-grid">
           <div class="panel">
             <h3>New Post</h3>
-            <input id="feedCaption" placeholder="Caption">
+            <input id="feedCaption" placeholder="Caption" />
             <select id="feedSpecies">
               <option value="DEER">Deer</option>
               <option value="TURKEY">Turkey</option>
@@ -84,8 +120,8 @@
               <option value="BUCK">Buck</option>
               <option value="DOE">Doe</option>
             </select>
-            <input id="feedLocationLbl" placeholder="Location label">
-            <input id="feedImageUrl" placeholder="Image URL (optional)">
+            <input id="feedLocationLbl" placeholder="Location label" />
+            <input id="feedImageUrl" placeholder="Image URL (optional)" />
             <button class="btn" id="postFeedBtn">Post</button>
           </div>
           <div class="panel">
@@ -95,6 +131,7 @@
         </div>
       </section>
 
+      <!-- GUIDE -->
       <section id="tab-guide" class="tab-panel">
         <h2>How to Gut a Deer</h2>
         <div id="guideStep" class="guide-step"></div>
@@ -106,17 +143,7 @@
     </main>
   </div>
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
-  <script src="app.js"></script>
+  <!-- No Google Maps JS API, just our app logic -->
+  <script src="app.js" defer></script>
 </body>
 </html>
